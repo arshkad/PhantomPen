@@ -78,4 +78,68 @@
             <div class="storage-info" id="storage-info">0 docs · 0 KB</div>
           </div>
         </aside>
-  
+      <!-- Main Content -->
+      <main id="main-content">
+
+        <!-- Editor Panel -->
+        <div id="panel-editor" class="panel active">
+          <div class="editor-toolbar">
+            <div class="doc-title-wrap">
+              <input type="text" id="doc-title" placeholder="Untitled Document" class="doc-title-input" />
+              <span class="save-indicator" id="save-indicator">●</span>
+            </div>
+            <div class="toolbar-actions">
+              <button class="tool-btn" onclick="formatText('bold')" title="Bold">𝐁</button>
+              <button class="tool-btn" onclick="formatText('italic')" title="Italic">𝐼</button>
+              <button class="tool-btn" onclick="insertHeading(1)" title="H1">H1</button>
+              <button class="tool-btn" onclick="insertHeading(2)" title="H2">H2</button>
+              <button class="tool-btn" onclick="insertCodeBlock()" title="Code">⌨</button>
+              <div class="toolbar-sep"></div>
+              <button class="tool-btn" onclick="saveCurrentDoc()" title="Save">💾</button>
+              <button class="tool-btn" onclick="exportDoc()" title="Export">⬇</button>
+            </div>
+          </div>
+          <div id="editor" contenteditable="true" spellcheck="true" placeholder="Start writing... Everything is saved locally and encrypted."></div>
+          <div class="editor-statusbar">
+            <span id="word-count">0 words</span>
+            <span id="char-count">0 chars</span>
+            <span id="last-saved">Not saved</span>
+          </div>
+        </div>
+
+        <!-- Files Panel -->
+        <div id="panel-files" class="panel">
+          <div class="panel-header">
+            <h2>📁 File Vault</h2>
+            <p>All files stored and encrypted locally.</p>
+          </div>
+          <div class="files-grid" id="files-grid">
+            <div class="file-upload-zone" id="drop-zone">
+              <div class="drop-content">
+                <span class="drop-icon">⬆</span>
+                <p>Drop files here or click to upload</p>
+                <p class="drop-sub">Images, PDFs, code files — encrypted on-device</p>
+                <input type="file" id="file-input" multiple hidden />
+                <button class="btn-primary" onclick="document.getElementById('file-input').click()">Choose Files</button>
+              </div>
+            </div>
+          </div>
+          <div id="file-list" class="file-list"></div>
+        </div>
+
+        <!-- History Panel -->
+        <div id="panel-history" class="panel">
+          <div class="panel-header">
+            <h2>🕐 Version History</h2>
+            <p>Every save creates a snapshot. Restore any version.</p>
+          </div>
+          <div class="history-doc-select">
+            <label>Document:</label>
+            <select id="history-doc-select" onchange="loadHistory()">
+              <option value="">— Select document —</option>
+            </select>
+          </div>
+          <div id="history-list" class="history-list">
+            <div class="empty-state">Select a document to view its history.</div>
+          </div>
+        </div>  
