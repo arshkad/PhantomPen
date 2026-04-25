@@ -23,7 +23,7 @@ CORS(app)  # Allow requests from the browser frontend
 # ── Config ──────────────────────────────────────────────────────────────────
 OLLAMA_URL   = "http://localhost:11434"
 OLLAMA_MODEL = "llama3.2"          # change to any model you have pulled
-PORT         = 5000
+PORT         = 5001 
 # ── Health check ─────────────────────────────────────────────────────────────
 @app.route("/api/status")
 def status():

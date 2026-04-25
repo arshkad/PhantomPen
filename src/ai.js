@@ -1,7 +1,7 @@
 // PhantomPen OS — AI Assistant Frontend
 // Talks to the local Flask as well as Ollama backend at localhost:5000
 
-const AI_BASE = 'http://localhost:5000/api';
+const AI_BASE = 'http://localhost:5001/api';
 let aiChatHistory = [];
 let lastAIResult  = '';
 

@@ -1,7 +1,7 @@
 // PhantomPen OS — Backend Integration
 // Handles real file exports via Flask backend, falls back to plain text
 
-const BACKEND = 'http://localhost:5000/api';
+const BACKEND = 'http://localhost:5001/api';
 
 function toggleExportMenu() {
   const menu = document.getElementById('export-menu');
