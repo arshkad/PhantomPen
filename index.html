@@ -197,3 +197,152 @@
               <p class="share-note">⚠ The encryption key is in the URL fragment (#). Anyone with this link can read the document.</p>
             </div>
           </div>
+          <div class="share-divider"></div>
+
+          <div class="panel-header">
+            <h2>🔓 Open Shared Link</h2>
+            <p>Paste a PhantomPen share link to decrypt and read it.</p>
+          </div>
+          <div class="share-form">
+            <div class="form-group">
+              <label>Paste share link</label>
+              <input type="text" id="open-share-input" placeholder="phantompen://share#..." />
+            </div>
+            <button class="btn-primary" onclick="openShareLink()">Decrypt & Open</button>
+          </div>
+          <div id="open-share-result" class="open-share-result hidden"></div>
+        </div>
+
+        <!-- AI Assistant Panel -->
+        <div id="panel-ai" class="panel">
+          <div class="panel-header">
+            <h2>🤖 AI Writing Assistant</h2>
+            <p>Local AI powered by Ollama — fully private, zero cloud.</p>
+          </div>
+          <div class="ai-status-bar" id="ai-status-bar">
+            <span class="ai-status-dot" id="ai-status-dot">●</span>
+            <span id="ai-status-text">Checking Ollama...</span>
+            <a href="https://ollama.com" target="_blank" class="ai-install-link" id="ai-install-link" style="display:none">Install Ollama →</a>
+          </div>
+          <div class="ai-section">
+            <div class="ai-section-label">QUICK ACTIONS</div>
+            <div class="ai-actions-grid">
+              <button class="ai-action-btn" onclick="quickAI('continue')">
+                <span>✨</span><strong>Continue writing</strong><small>AI picks up where you left off</small>
+              </button>
+              <button class="ai-action-btn" onclick="quickAI('improve')">
+                <span>⚡</span><strong>Improve selection</strong><small>Make selected text clearer</small>
+              </button>
+              <button class="ai-action-btn" onclick="quickAI('summarise')">
+                <span>📋</span><strong>Summarise</strong><small>2-3 sentence summary</small>
+              </button>
+              <button class="ai-action-btn" onclick="quickAI('brainstorm')">
+                <span>💡</span><strong>Brainstorm ideas</strong><small>Generate related ideas</small>
+              </button>
+              <button class="ai-action-btn" onclick="quickAI('fixgrammar')">
+                <span>✓</span><strong>Fix grammar</strong><small>Clean up spelling</small>
+              </button>
+            </div>
+          </div>
+          <div class="ai-result-wrap hidden" id="ai-result-wrap">
+            <div class="ai-result-header">
+              <span id="ai-result-label">AI suggestion</span>
+              <div class="ai-result-actions">
+                <button class="btn-copy" onclick="insertAIResult()">Insert into doc</button>
+                <button class="ai-dismiss" onclick="dismissAIResult()">✕</button>
+              </div>
+            </div>
+            <div class="ai-result-body" id="ai-result-body"></div>
+          </div>
+          <div class="ai-section">
+            <div class="ai-section-label">CHAT WITH YOUR DOCUMENT</div>
+            <div class="ai-chat-box" id="ai-chat-box">
+              <div class="ai-chat-empty">Ask anything about your document...</div>
+            </div>
+            <div class="ai-chat-input-row">
+              <input type="text" id="ai-chat-input" placeholder="Ask the AI anything..." onkeydown="if(event.key==='Enter') sendAIChat()" />
+              <button class="btn-primary" onclick="sendAIChat()" style="width:auto;padding:10px 16px">Send</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div id="panel-settings" class="panel">
+          <div class="panel-header">
+            <h2>⚙️ Settings</h2>
+          </div>
+          <div class="settings-section">
+            <h3>Security</h3>
+            <div class="setting-row">
+              <div>
+                <strong>Change Passphrase</strong>
+                <p>Re-encrypts all local data with a new passphrase.</p>
+              </div>
+              <button class="btn-secondary" onclick="changePassphrase()">Change</button>
+            </div>
+            <div class="setting-row">
+              <div>
+                <strong>Auto-lock</strong>
+                <p>Lock workspace after inactivity.</p>
+              </div>
+              <select id="autolock-select" onchange="saveSettings()">
+                <option value="0">Never</option>
+                <option value="300000" selected>5 minutes</option>
+                <option value="900000">15 minutes</option>
+                <option value="3600000">1 hour</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3>Data</h3>
+            <div class="setting-row">
+              <div>
+                <strong>Export Vault</strong>
+                <p>Download all data as an encrypted backup file.</p>
+              </div>
+              <button class="btn-secondary" onclick="exportVault()">Export</button>
+            </div>
+            <div class="setting-row">
+              <div>
+                <strong>Import Vault</strong>
+                <p>Restore from a backup file.</p>
+              </div>
+              <button class="btn-secondary" onclick="importVault()">Import</button>
+            </div>
+            <div class="setting-row danger-row">
+              <div>
+                <strong>Wipe Vault</strong>
+                <p>Permanently delete all local data. Cannot be undone.</p>
+              </div>
+              <button class="btn-danger" onclick="wipeVault()">Wipe</button>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3>About</h3>
+            <div class="about-block">
+              <p><strong>PhantomPen OS</strong> v1.0.0</p>
+              <p>100% local. Zero telemetry. No cloud. No lock-in.</p>
+              <p>Encryption: AES-GCM 256-bit via Web Crypto API</p>
+              <p>Storage: localStorage (no server, no account needed)</p>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="src/crypto.js"></script>
+  <script src="src/storage.js"></script>
+  <script src="src/editor.js"></script>
+  <script src="src/files.js"></script>
+  <script src="src/history.js"></script>
+  <script src="src/share.js"></script>
+  <script src="src/ai.js"></script>
+  <script src="src/backend.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
