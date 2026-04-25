@@ -120,3 +120,65 @@ function showAISpinner(msg) {
 function hideAISpinner() {
   // spinner is replaced by actual content via showAIResult
 }
+
+// ── Chat ──────────────────────────────────────────────────────────────────────
+async function sendAIChat() {
+    const input  = document.getElementById('ai-chat-input');
+    const msg    = input.value.trim();
+    if (!msg) return;
+  
+    input.value = '';
+    const editor = document.getElementById('editor');
+    const docCtx = editor ? editor.innerText.slice(0, 3000) : '';
+  
+    // Add user message to UI
+    appendChatMessage('user', msg);
+    aiChatHistory.push({ role: 'user', content: msg });
+  
+    // Typing indicator
+    const typingId = 'typing-' + Date.now();
+    appendChatMessage('assistant', '...', typingId);
+  
+    try {
+      const r = await fetch(`${AI_BASE}/ai/chat`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ messages: aiChatHistory, documentContext: docCtx }),
+      });
+  
+      const el = document.getElementById(typingId);
+      if (!r.ok) {
+        const err = await r.json();
+        if (el) el.textContent = '⚠ ' + (err.error || 'Error');
+        return;
+      }
+  
+      const d = await r.json();
+      const reply = d.result || '';
+      if (el) el.textContent = reply;
+      aiChatHistory.push({ role: 'assistant', content: reply });
+    } catch (e) {
+      const el = document.getElementById(typingId);
+      if (el) el.textContent = '⚠ Backend offline — run python server.py';
+    }
+  }
+  
+  function appendChatMessage(role, text, id) {
+    const box   = document.getElementById('ai-chat-box');
+    const empty = box.querySelector('.ai-chat-empty');
+    if (empty) empty.remove();
+  
+    const msg = document.createElement('div');
+    msg.className = `ai-chat-msg ai-chat-${role}`;
+    msg.textContent = text;
+    if (id) msg.id = id;
+    box.appendChild(msg);
+    box.scrollTop = box.scrollHeight;
+  }
+  
+  // Init: check status when AI panel is opened
+  document.addEventListener('DOMContentLoaded', () => {
+    // Poll status every 10s
+    checkAIStatus();
+    setInterval(checkAIStatus, 10000);
+  });  
