@@ -277,3 +277,63 @@ def export_txt():
     buf     = io.BytesIO((f"{title}\n{'='*len(title)}\n\n{content}").encode("utf-8"))
     safe_name = "".join(c if c.isalnum() or c in " -_" else "_" for c in title)
     return send_file(buf, mimetype="text/plain", as_attachment=True, download_name=f"{safe_name}.txt")
+    
+# ── Helpers ───────────────────────────────────────────────────────────────────
+def _html_to_docx(doc, html):
+    """Very lightweight HTML → docx converter (no external deps beyond python-docx)."""
+    from docx.shared import Pt
+    import re
+
+    # Strip tags we handle explicitly, split into blocks
+    # Handle headings
+    html = re.sub(r"<h1[^>]*>(.*?)</h1>", lambda m: f"\n[H1]{m.group(1)}[/H1]\n", html, flags=re.S)
+    html = re.sub(r"<h2[^>]*>(.*?)</h2>", lambda m: f"\n[H2]{m.group(1)}[/H2]\n", html, flags=re.S)
+    html = re.sub(r"<h3[^>]*>(.*?)</h3>", lambda m: f"\n[H3]{m.group(1)}[/H3]\n", html, flags=re.S)
+    html = re.sub(r"<p[^>]*>(.*?)</p>",   lambda m: f"\n{m.group(1)}\n",           html, flags=re.S)
+    html = re.sub(r"<br\s*/?>", "\n", html)
+    html = re.sub(r"<strong>(.*?)</strong>", r"**\1**", html, flags=re.S)
+    html = re.sub(r"<em>(.*?)</em>",        r"_\1_",   html, flags=re.S)
+    html = re.sub(r"<[^>]+>", "", html)  # strip remaining tags
+    html = html.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&nbsp;", " ")
+
+    for line in html.split("\n"):
+        line = line.strip()
+        if not line:
+            continue
+        if line.startswith("[H1]"):
+            doc.add_heading(line[4:-5], level=1)
+        elif line.startswith("[H2]"):
+            doc.add_heading(line[4:-5], level=2)
+        elif line.startswith("[H3]"):
+            doc.add_heading(line[4:-5], level=3)
+        else:
+            p = doc.add_paragraph()
+            # Handle bold/italic inline
+            import re as _re
+            parts = _re.split(r"(\*\*.*?\*\*|_.*?_)", line)
+            for part in parts:
+                if part.startswith("**") and part.endswith("**"):
+                    run = p.add_run(part[2:-2])
+                    run.bold = True
+                elif part.startswith("_") and part.endswith("_"):
+                    run = p.add_run(part[1:-1])
+                    run.italic = True
+                else:
+                    p.add_run(part)
+
+
+# ── Run ───────────────────────────────────────────────────────────────────────
+if __name__ == "__main__":
+    print("=" * 50)
+    print("  PhantomPen OS — Local Backend")
+    print(f"  Running at http://localhost:{PORT}")
+    print("=" * 50)
+    print()
+    print("  AI Features require Ollama:")
+    print("  1. Install from https://ollama.com")
+    print(f"  2. Run: ollama pull {OLLAMA_MODEL}")
+    print("  3. Run: ollama serve")
+    print()
+    print("  Export Features: always available")
+    print("=" * 50)
+    app.run(port=PORT, debug=False)
