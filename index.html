@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PhantomPen OS — Private Creative Workspace</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="src/styles.css">
 </head>
 <body>
@@ -22,62 +21,67 @@
         <p class="boot-status">Initializing secure workspace...</p>
       </div>
     </div>
+
     <!-- Unlock Screen -->
     <div id="unlock-screen" class="hidden">
-        <div class="unlock-inner">
-          <div class="lock-icon">🔒</div>
-          <h2>Enter Passphrase</h2>
-          <p class="unlock-sub">All data is encrypted locally. Nothing leaves your device.</p>
-          <input type="password" id="passphrase-input" placeholder="Enter passphrase..." autocomplete="off" />
-          <button id="unlock-btn" class="btn-primary">Unlock Workspace</button>
-          <button id="create-btn" class="btn-ghost">Create New Vault</button>
-          <p class="unlock-hint" id="unlock-hint"></p>
-        </div>
+      <div class="unlock-inner">
+        <div class="lock-icon">🔒</div>
+        <h2>Enter Passphrase</h2>
+        <p class="unlock-sub">All data is encrypted locally. Nothing leaves your device.</p>
+        <input type="password" id="passphrase-input" placeholder="Enter passphrase..." autocomplete="off" />
+        <button id="unlock-btn" class="btn-primary">Unlock Workspace</button>
+        <button id="create-btn" class="btn-ghost">Create New Vault</button>
+        <p class="unlock-hint" id="unlock-hint"></p>
       </div>
-  
-      <!-- Main Workspace -->
-      <div id="workspace" class="hidden">
-        <!-- Sidebar -->
-        <aside id="sidebar">
-          <div class="sidebar-header">
-            <span class="ghost-icon-sm">◈</span>
-            <span class="brand-sm">PhantomPen<em>OS</em></span>
-            <button id="lock-btn" title="Lock Workspace">🔒</button>
+    </div>
+
+    <!-- Main Workspace -->
+    <div id="workspace" class="hidden">
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <div class="sidebar-header">
+          <span class="ghost-icon-sm">◈</span>
+          <span class="brand-sm">PhantomPen<em>OS</em></span>
+          <button id="lock-btn" title="Lock Workspace">🔒</button>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="section-label">WORKSPACE</div>
+          <button class="nav-btn active" data-panel="editor" onclick="switchPanel('editor')">
+            <span>✏️</span> Editor
+          </button>
+          <button class="nav-btn" data-panel="files" onclick="switchPanel('files')">
+            <span>📁</span> Files
+          </button>
+          <button class="nav-btn" data-panel="history" onclick="switchPanel('history')">
+            <span>🕐</span> History
+          </button>
+          <button class="nav-btn" data-panel="share" onclick="switchPanel('share')">
+            <span>🔗</span> Share
+          </button>
+          <button class="nav-btn" data-panel="ai" onclick="switchPanel('ai')">
+            <span>🤖</span> AI Assistant
+          </button>
+          <button class="nav-btn" data-panel="settings" onclick="switchPanel('settings')">
+            <span>⚙️</span> Settings
+          </button>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="section-label">DOCUMENTS</div>
+          <div id="doc-list"></div>
+          <button class="new-doc-btn" onclick="newDocument()">+ New Document</button>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="vault-status">
+            <span class="status-dot"></span>
+            <span id="vault-label">Vault locked</span>
           </div>
-  
-          <div class="sidebar-section">
-            <div class="section-label">WORKSPACE</div>
-            <button class="nav-btn active" data-panel="editor" onclick="switchPanel('editor')">
-              <span>✏️</span> Editor
-            </button>
-            <button class="nav-btn" data-panel="files" onclick="switchPanel('files')">
-              <span>📁</span> Files
-            </button>
-            <button class="nav-btn" data-panel="history" onclick="switchPanel('history')">
-              <span>🕐</span> History
-            </button>
-            <button class="nav-btn" data-panel="share" onclick="switchPanel('share')">
-              <span>🔗</span> Share
-            </button>
-            <button class="nav-btn" data-panel="settings" onclick="switchPanel('settings')">
-              <span>⚙️</span> Settings
-            </button>
-          </div>
-  
-          <div class="sidebar-section">
-            <div class="section-label">DOCUMENTS</div>
-            <div id="doc-list"></div>
-            <button class="new-doc-btn" onclick="newDocument()">+ New Document</button>
-          </div>
-  
-          <div class="sidebar-footer">
-            <div class="vault-status">
-              <span class="status-dot"></span>
-              <span id="vault-label">Vault locked</span>
-            </div>
-            <div class="storage-info" id="storage-info">0 docs · 0 KB</div>
-          </div>
-        </aside>
+          <div class="storage-info" id="storage-info">0 docs · 0 KB</div>
+        </div>
+      </aside>
+
       <!-- Main Content -->
       <main id="main-content">
 
@@ -95,8 +99,19 @@
               <button class="tool-btn" onclick="insertHeading(2)" title="H2">H2</button>
               <button class="tool-btn" onclick="insertCodeBlock()" title="Code">⌨</button>
               <div class="toolbar-sep"></div>
+              <button class="tool-btn ai-tool-btn" onclick="quickAI('continue')" title="AI: Continue writing">✨ Continue</button>
+              <button class="tool-btn ai-tool-btn" onclick="quickAI('improve')" title="AI: Improve selection">⚡ Improve</button>
+              <button class="tool-btn ai-tool-btn" onclick="quickAI('fixgrammar')" title="AI: Fix grammar">✓ Fix</button>
+              <div class="toolbar-sep"></div>
               <button class="tool-btn" onclick="saveCurrentDoc()" title="Save">💾</button>
-              <button class="tool-btn" onclick="exportDoc()" title="Export">⬇</button>
+              <div class="export-wrap">
+                <button class="tool-btn" onclick="toggleExportMenu()" title="Export" id="export-btn">⬇ Export</button>
+                <div class="export-menu hidden" id="export-menu">
+                  <button onclick="exportAs('pdf')">📕 Export as PDF</button>
+                  <button onclick="exportAs('docx')">📘 Export as DOCX</button>
+                  <button onclick="exportAs('txt')">📄 Export as TXT</button>
+                </div>
+              </div>
             </div>
           </div>
           <div id="editor" contenteditable="true" spellcheck="true" placeholder="Start writing... Everything is saved locally and encrypted."></div>
@@ -143,135 +158,42 @@
             <div class="empty-state">Select a document to view its history.</div>
           </div>
         </div>
+
         <!-- Share Panel -->
         <div id="panel-share" class="panel">
-            <div class="panel-header">
-              <h2>🔗 Secure Share</h2>
-              <p>Generate encrypted, expiring share links. No server required — the key is in the URL fragment.</p>
-            </div>
-            <div class="share-form">
-              <div class="form-group">
-                <label>Document to share</label>
-                <select id="share-doc-select">
-                  <option value="">— Select document —</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Expires after</label>
-                <select id="share-expiry">
-                  <option value="3600000">1 hour</option>
-                  <option value="86400000" selected>24 hours</option>
-                  <option value="604800000">7 days</option>
-                  <option value="0">Never</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Password protect (optional)</label>
-                <input type="password" id="share-password" placeholder="Extra password layer..." />
-              </div>
-              <button class="btn-primary" onclick="generateShareLink()">Generate Share Link</button>
-            </div>
-            <div id="share-result" class="share-result hidden">
-              <div class="share-link-box">
-                <label>Your secure link:</label>
-                <div class="link-copy-row">
-                  <input type="text" id="share-link-output" readonly />
-                  <button class="btn-copy" onclick="copyShareLink()">Copy</button>
-                </div>
-                <p class="share-note">⚠ The encryption key is in the URL fragment (#). Anyone with this link can read the document.</p>
-              </div>
-            </div>
-  
-            <div class="share-divider"></div>
-  
-            <div class="panel-header">
-              <h2> Open Shared Link</h2>
-              <p>Paste a PhantomPen share link to decrypt and read it.</p>
-            </div>
-            <div class="share-form">
-              <div class="form-group">
-                <label>Paste share link</label>
-                <input type="text" id="open-share-input" placeholder="phantompen://share#..." />
-              </div>
-              <button class="btn-primary" onclick="openShareLink()">Decrypt & Open</button>
-            </div>
-            <div id="open-share-result" class="open-share-result hidden"></div>
+          <div class="panel-header">
+            <h2>🔗 Secure Share</h2>
+            <p>Generate encrypted, expiring share links. No server required — the key is in the URL fragment.</p>
           </div>
-        <!-- Settings Panel -->
-        <div id="panel-settings" class="panel">
-            <div class="panel-header">
-              <h2>⚙️ Settings</h2>
+          <div class="share-form">
+            <div class="form-group">
+              <label>Document to share</label>
+              <select id="share-doc-select">
+                <option value="">— Select document —</option>
+              </select>
             </div>
-            <div class="settings-section">
-              <h3>Security</h3>
-              <div class="setting-row">
-                <div>
-                  <strong>Change Passphrase</strong>
-                  <p>Re-encrypts all local data with a new passphrase.</p>
-                </div>
-                <button class="btn-secondary" onclick="changePassphrase()">Change</button>
-              </div>
-              <div class="setting-row">
-                <div>
-                  <strong>Auto-lock</strong>
-                  <p>Lock workspace after inactivity.</p>
-                </div>
-                <select id="autolock-select" onchange="saveSettings()">
-                  <option value="0">Never</option>
-                  <option value="300000" selected>5 minutes</option>
-                  <option value="900000">15 minutes</option>
-                  <option value="3600000">1 hour</option>
-                </select>
-              </div>
+            <div class="form-group">
+              <label>Expires after</label>
+              <select id="share-expiry">
+                <option value="3600000">1 hour</option>
+                <option value="86400000" selected>24 hours</option>
+                <option value="604800000">7 days</option>
+                <option value="0">Never</option>
+              </select>
             </div>
-            <div class="settings-section">
-              <h3>Data</h3>
-              <div class="setting-row">
-                <div>
-                  <strong>Export Vault</strong>
-                  <p>Download all data as an encrypted backup file.</p>
-                </div>
-                <button class="btn-secondary" onclick="exportVault()">Export</button>
-              </div>
-              <div class="setting-row">
-                <div>
-                  <strong>Import Vault</strong>
-                  <p>Restore from a backup file.</p>
-                </div>
-                <button class="btn-secondary" onclick="importVault()">Import</button>
-              </div>
-              <div class="setting-row danger-row">
-                <div>
-                  <strong>Wipe Vault</strong>
-                  <p>Permanently delete all local data. Cannot be undone.</p>
-                </div>
-                <button class="btn-danger" onclick="wipeVault()">Wipe</button>
-              </div>
+            <div class="form-group">
+              <label>Password protect (optional)</label>
+              <input type="password" id="share-password" placeholder="Extra password layer..." />
             </div>
-            <div class="settings-section">
-              <h3>About</h3>
-              <div class="about-block">
-                <p><strong>PhantomPen OS</strong> v1.0.0</p>
-                <p>100% local. Zero telemetry. No cloud. No lock-in.</p>
-                <p>Encryption: AES-GCM 256-bit via Web Crypto API</p>
-                <p>Storage: localStorage (no server, no account needed)</p>
+            <button class="btn-primary" onclick="generateShareLink()">Generate Share Link</button>
+          </div>
+          <div id="share-result" class="share-result hidden">
+            <div class="share-link-box">
+              <label>Your secure link:</label>
+              <div class="link-copy-row">
+                <input type="text" id="share-link-output" readonly />
+                <button class="btn-copy" onclick="copyShareLink()">Copy</button>
               </div>
+              <p class="share-note">⚠ The encryption key is in the URL fragment (#). Anyone with this link can read the document.</p>
             </div>
           </div>
-  
-        </main>
-      </div>
-    </div>
-    
-  <!-- Toast -->
-  <div id="toast" class="toast hidden"></div>
-
-  <script src="src/crypto.js"></script>
-  <script src="src/storage.js"></script>
-  <script src="src/editor.js"></script>
-  <script src="src/files.js"></script>
-  <script src="src/history.js"></script>
-  <script src="src/share.js"></script>
-  <script src="src/app.js"></script>
-</body>
-</html>  
