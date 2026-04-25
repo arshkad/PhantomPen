@@ -196,4 +196,70 @@
               <button class="btn-primary" onclick="openShareLink()">Decrypt & Open</button>
             </div>
             <div id="open-share-result" class="open-share-result hidden"></div>
-          </div>  
+          </div>
+        <!-- Settings Panel -->
+        <div id="panel-settings" class="panel">
+            <div class="panel-header">
+              <h2>⚙️ Settings</h2>
+            </div>
+            <div class="settings-section">
+              <h3>Security</h3>
+              <div class="setting-row">
+                <div>
+                  <strong>Change Passphrase</strong>
+                  <p>Re-encrypts all local data with a new passphrase.</p>
+                </div>
+                <button class="btn-secondary" onclick="changePassphrase()">Change</button>
+              </div>
+              <div class="setting-row">
+                <div>
+                  <strong>Auto-lock</strong>
+                  <p>Lock workspace after inactivity.</p>
+                </div>
+                <select id="autolock-select" onchange="saveSettings()">
+                  <option value="0">Never</option>
+                  <option value="300000" selected>5 minutes</option>
+                  <option value="900000">15 minutes</option>
+                  <option value="3600000">1 hour</option>
+                </select>
+              </div>
+            </div>
+            <div class="settings-section">
+              <h3>Data</h3>
+              <div class="setting-row">
+                <div>
+                  <strong>Export Vault</strong>
+                  <p>Download all data as an encrypted backup file.</p>
+                </div>
+                <button class="btn-secondary" onclick="exportVault()">Export</button>
+              </div>
+              <div class="setting-row">
+                <div>
+                  <strong>Import Vault</strong>
+                  <p>Restore from a backup file.</p>
+                </div>
+                <button class="btn-secondary" onclick="importVault()">Import</button>
+              </div>
+              <div class="setting-row danger-row">
+                <div>
+                  <strong>Wipe Vault</strong>
+                  <p>Permanently delete all local data. Cannot be undone.</p>
+                </div>
+                <button class="btn-danger" onclick="wipeVault()">Wipe</button>
+              </div>
+            </div>
+            <div class="settings-section">
+              <h3>About</h3>
+              <div class="about-block">
+                <p><strong>PhantomPen OS</strong> v1.0.0</p>
+                <p>100% local. Zero telemetry. No cloud. No lock-in.</p>
+                <p>Encryption: AES-GCM 256-bit via Web Crypto API</p>
+                <p>Storage: localStorage (no server, no account needed)</p>
+              </div>
+            </div>
+          </div>
+  
+        </main>
+      </div>
+    </div>
+  
