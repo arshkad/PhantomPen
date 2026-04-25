@@ -22,3 +22,60 @@
         <p class="boot-status">Initializing secure workspace...</p>
       </div>
     </div>
+    <!-- Unlock Screen -->
+    <div id="unlock-screen" class="hidden">
+        <div class="unlock-inner">
+          <div class="lock-icon">🔒</div>
+          <h2>Enter Passphrase</h2>
+          <p class="unlock-sub">All data is encrypted locally. Nothing leaves your device.</p>
+          <input type="password" id="passphrase-input" placeholder="Enter passphrase..." autocomplete="off" />
+          <button id="unlock-btn" class="btn-primary">Unlock Workspace</button>
+          <button id="create-btn" class="btn-ghost">Create New Vault</button>
+          <p class="unlock-hint" id="unlock-hint"></p>
+        </div>
+      </div>
+  
+      <!-- Main Workspace -->
+      <div id="workspace" class="hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar">
+          <div class="sidebar-header">
+            <span class="ghost-icon-sm">◈</span>
+            <span class="brand-sm">PhantomPen<em>OS</em></span>
+            <button id="lock-btn" title="Lock Workspace">🔒</button>
+          </div>
+  
+          <div class="sidebar-section">
+            <div class="section-label">WORKSPACE</div>
+            <button class="nav-btn active" data-panel="editor" onclick="switchPanel('editor')">
+              <span>✏️</span> Editor
+            </button>
+            <button class="nav-btn" data-panel="files" onclick="switchPanel('files')">
+              <span>📁</span> Files
+            </button>
+            <button class="nav-btn" data-panel="history" onclick="switchPanel('history')">
+              <span>🕐</span> History
+            </button>
+            <button class="nav-btn" data-panel="share" onclick="switchPanel('share')">
+              <span>🔗</span> Share
+            </button>
+            <button class="nav-btn" data-panel="settings" onclick="switchPanel('settings')">
+              <span>⚙️</span> Settings
+            </button>
+          </div>
+  
+          <div class="sidebar-section">
+            <div class="section-label">DOCUMENTS</div>
+            <div id="doc-list"></div>
+            <button class="new-doc-btn" onclick="newDocument()">+ New Document</button>
+          </div>
+  
+          <div class="sidebar-footer">
+            <div class="vault-status">
+              <span class="status-dot"></span>
+              <span id="vault-label">Vault locked</span>
+            </div>
+            <div class="storage-info" id="storage-info">0 docs · 0 KB</div>
+          </div>
+        </aside>
+  
