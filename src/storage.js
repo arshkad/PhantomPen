@@ -60,4 +60,51 @@ const Storage = (() => {
       const enc = await Crypto.encrypt('phantompen_ok', pass);
       localStorage.setItem(PREFIX + 'sentinel', enc);
     }
-  
+    function vaultExists() {
+        return !!localStorage.getItem(PREFIX + 'sentinel');
+      }
+    
+      async function exportAll() {
+        const data = {};
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(PREFIX)) {
+            data[k] = localStorage.getItem(k);
+          }
+        }
+        return data;
+      }
+    
+      function importAll(data) {
+        for (const [k, v] of Object.entries(data)) {
+          if (k.startsWith(PREFIX)) localStorage.setItem(k, v);
+        }
+      }
+    
+      function wipeAll() {
+        const toRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(PREFIX)) toRemove.push(k);
+        }
+        toRemove.forEach(k => localStorage.removeItem(k));
+      }
+    
+      function storageSize() {
+        let total = 0;
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(PREFIX)) {
+            total += (localStorage.getItem(k) || '').length * 2;
+          }
+        }
+        return total;
+      }
+    
+      return {
+        setPassphrase, getPassphrase, clearPassphrase,
+        save, load, remove, listKeys,
+        verifyPassphrase, initVault, vaultExists,
+        exportAll, importAll, wipeAll, storageSize
+      };
+    })();  
