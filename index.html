@@ -142,4 +142,58 @@
           <div id="history-list" class="history-list">
             <div class="empty-state">Select a document to view its history.</div>
           </div>
-        </div>  
+        </div>
+        <!-- Share Panel -->
+        <div id="panel-share" class="panel">
+            <div class="panel-header">
+              <h2>🔗 Secure Share</h2>
+              <p>Generate encrypted, expiring share links. No server required — the key is in the URL fragment.</p>
+            </div>
+            <div class="share-form">
+              <div class="form-group">
+                <label>Document to share</label>
+                <select id="share-doc-select">
+                  <option value="">— Select document —</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Expires after</label>
+                <select id="share-expiry">
+                  <option value="3600000">1 hour</option>
+                  <option value="86400000" selected>24 hours</option>
+                  <option value="604800000">7 days</option>
+                  <option value="0">Never</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Password protect (optional)</label>
+                <input type="password" id="share-password" placeholder="Extra password layer..." />
+              </div>
+              <button class="btn-primary" onclick="generateShareLink()">Generate Share Link</button>
+            </div>
+            <div id="share-result" class="share-result hidden">
+              <div class="share-link-box">
+                <label>Your secure link:</label>
+                <div class="link-copy-row">
+                  <input type="text" id="share-link-output" readonly />
+                  <button class="btn-copy" onclick="copyShareLink()">Copy</button>
+                </div>
+                <p class="share-note">⚠ The encryption key is in the URL fragment (#). Anyone with this link can read the document.</p>
+              </div>
+            </div>
+  
+            <div class="share-divider"></div>
+  
+            <div class="panel-header">
+              <h2> Open Shared Link</h2>
+              <p>Paste a PhantomPen share link to decrypt and read it.</p>
+            </div>
+            <div class="share-form">
+              <div class="form-group">
+                <label>Paste share link</label>
+                <input type="text" id="open-share-input" placeholder="phantompen://share#..." />
+              </div>
+              <button class="btn-primary" onclick="openShareLink()">Decrypt & Open</button>
+            </div>
+            <div id="open-share-result" class="open-share-result hidden"></div>
+          </div>  
