@@ -344,5 +344,14 @@
   <script src="src/ai.js"></script>
   <script src="src/backend.js"></script>
   <script src="src/app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js")
+          .then(() => console.log("PhantomPen: offline mode ready"))
+          .catch(e => console.log("SW failed:", e));
+      });
+    }
+  </script>
 </body>
 </html>
