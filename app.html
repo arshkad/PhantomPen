@@ -123,3 +123,127 @@
             <span id="last-saved">Not saved</span>
           </div>
         </div>
+
+        <!-- Files Panel -->
+        <div id="panel-files" class="panel">
+            <div class="panel-header">
+              <h2>📁 File Vault</h2>
+              <p>All files stored and encrypted locally.</p>
+            </div>
+            <div class="files-grid" id="files-grid">
+              <div class="file-upload-zone" id="drop-zone">
+                <div class="drop-content">
+                  <span class="drop-icon">⬆</span>
+                  <p>Drop files here or click to upload</p>
+                  <p class="drop-sub">Images, PDFs, code files — encrypted on-device</p>
+                  <input type="file" id="file-input" multiple hidden />
+                  <button class="btn-primary" onclick="document.getElementById('file-input').click()">Choose Files</button>
+                </div>
+              </div>
+            </div>
+            <div id="file-list" class="file-list"></div>
+          </div>
+  
+          <!-- History Panel -->
+          <div id="panel-history" class="panel">
+            <div class="panel-header">
+              <h2>🕐 Version History</h2>
+              <p>Every save creates a snapshot. Restore any version.</p>
+            </div>
+            <div class="history-doc-select">
+              <label>Document:</label>
+              <select id="history-doc-select" onchange="loadHistory()">
+                <option value="">— Select document —</option>
+              </select>
+            </div>
+            <div id="history-list" class="history-list">
+              <div class="empty-state">Select a document to view its history.</div>
+            </div>
+          </div>
+  
+          <!-- Share Panel -->
+          <div id="panel-share" class="panel">
+            <div class="panel-header">
+              <h2>🔗 Secure Share</h2>
+              <p>Generate encrypted, expiring share links. No server required — the key is in the URL fragment.</p>
+            </div>
+            <div class="share-form">
+              <div class="form-group">
+                <label>Document to share</label>
+                <select id="share-doc-select">
+                  <option value="">— Select document —</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Expires after</label>
+                <select id="share-expiry">
+                  <option value="3600000">1 hour</option>
+                  <option value="86400000" selected>24 hours</option>
+                  <option value="604800000">7 days</option>
+                  <option value="0">Never</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Password protect (optional)</label>
+                <input type="password" id="share-password" placeholder="Extra password layer..." />
+              </div>
+              <button class="btn-primary" onclick="generateShareLink()">Generate Share Link</button>
+            </div>
+            <div id="share-result" class="share-result hidden">
+              <div class="share-link-box">
+                <label>Your secure link:</label>
+                <div class="link-copy-row">
+                  <input type="text" id="share-link-output" readonly />
+                  <button class="btn-copy" onclick="copyShareLink()">Copy</button>
+                </div>
+                <p class="share-note">⚠ The encryption key is in the URL fragment (#). Anyone with this link can read the document.</p>
+              </div>
+            </div>
+  
+            <div class="share-divider"></div>
+  
+            <div class="panel-header">
+              <h2>🔓 Open Shared Link</h2>
+              <p>Paste a PhantomPen share link to decrypt and read it.</p>
+            </div>
+            <div class="share-form">
+              <div class="form-group">
+                <label>Paste share link</label>
+                <input type="text" id="open-share-input" placeholder="phantompen://share#..." />
+              </div>
+              <button class="btn-primary" onclick="openShareLink()">Decrypt & Open</button>
+            </div>
+            <div id="open-share-result" class="open-share-result hidden"></div>
+          </div>
+  
+          <!-- AI Assistant Panel -->
+          <div id="panel-ai" class="panel">
+            <div class="panel-header">
+              <h2>🤖 AI Writing Assistant</h2>
+              <p>Local AI powered by Ollama — fully private, zero cloud.</p>
+            </div>
+            <div class="ai-status-bar" id="ai-status-bar">
+              <span class="ai-status-dot" id="ai-status-dot">●</span>
+              <span id="ai-status-text">Checking Ollama...</span>
+              <a href="https://ollama.com" target="_blank" class="ai-install-link" id="ai-install-link" style="display:none">Install Ollama →</a>
+            </div>
+            <div class="ai-section">
+              <div class="ai-section-label">QUICK ACTIONS</div>
+              <div class="ai-actions-grid">
+                <button class="ai-action-btn" onclick="quickAI('continue')">
+                  <span>✨</span><strong>Continue writing</strong><small>AI picks up where you left off</small>
+                </button>
+                <button class="ai-action-btn" onclick="quickAI('improve')">
+                  <span>⚡</span><strong>Improve selection</strong><small>Make selected text clearer</small>
+                </button>
+                <button class="ai-action-btn" onclick="quickAI('summarise')">
+                  <span>📋</span><strong>Summarise</strong><small>2-3 sentence summary</small>
+                </button>
+                <button class="ai-action-btn" onclick="quickAI('brainstorm')">
+                  <span>💡</span><strong>Brainstorm ideas</strong><small>Generate related ideas</small>
+                </button>
+                <button class="ai-action-btn" onclick="quickAI('fixgrammar')">
+                  <span>✓</span><strong>Fix grammar</strong><small>Clean up spelling</small>
+                </button>
+              </div>
+            </div>
