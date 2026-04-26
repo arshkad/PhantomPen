@@ -79,6 +79,7 @@ async function unlockWorkspace() {
  await refreshDocList();
  updateStorageInfo();
  startAutoLock();
+ if (typeof initSecureVault === 'function') await initSecureVault();
  showToast('Vault unlocked ✓');
 }
 
