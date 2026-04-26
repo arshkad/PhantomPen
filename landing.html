@@ -356,3 +356,94 @@ section { padding: 100px 48px; position: relative; }
 }
 .val-green { background: var(--green-dim); color: var(--green); }
 .val-red { background: #ff1f4f15; color: var(--red); }
+/* ── CTA ── */
+#cta {
+  text-align: center; max-width: 600px; margin: 0 auto;
+  padding: 100px 48px;
+}
+.cta-glow {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: 400px; height: 200px;
+  background: radial-gradient(ellipse, var(--green-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+}
+footer a { color: var(--text3); text-decoration: none; }
+footer a:hover { color: var(--text2); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  #hero { padding: 100px 24px 60px; }
+  #how, #privacy { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px; }
+  section { padding: 60px 24px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .strip-item { padding: 12px 20px; font-size: 12px; }
+  footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-icon">◈</span>
+    Phantom<span>Pen</span>
+  </a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#privacy">Privacy</a>
+    <a href="index.html" class="nav-cta">Open App →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Track 4: DIY Software — Hackathon 2026
+    </div>
+    <h1 class="hero-title">
+      Your words.<br>
+      <em>Your device.</em><br>
+      <span class="strike">Their servers.</span>
+    </h1>
+    <p class="hero-sub">
+      A fully offline, encrypted creative workspace with local AI.
+      Write, store, and share — without giving anyone else access to your work.
+    </p>
+    <div class="hero-actions">
+      <a href="index.html" class="btn-main">
+        <span>◈</span> Open PhantomPen
+      </a>
+      <a href="#how" class="btn-outline">
+        See how it works ↓
+      </a>
+    </div>
+    <p class="hero-note">
+      <span>AES-256 encrypted</span> · runs offline · zero telemetry · open source
+    </p>
+  </div>
+</section>
