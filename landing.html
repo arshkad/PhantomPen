@@ -217,3 +217,40 @@ nav {
   animation: fadeUp 0.6s ease 0.4s both;
 }
 .hero-note span { color: var(--green); }
+/* ── FEATURE STRIP ── */
+.feature-strip {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+  overflow: hidden;
+}
+.strip-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px 32px;
+  border-right: 1px solid var(--border);
+  font-size: 13px; color: var(--text2); font-weight: 500;
+  white-space: nowrap;
+}
+.strip-item:last-child { border-right: none; }
+.strip-icon { color: var(--green); font-size: 16px; }
+
+/* ── SECTIONS ── */
+section { padding: 100px 48px; position: relative; }
+
+.section-label {
+  font-size: 11px; letter-spacing: 2px; font-weight: 700;
+  color: var(--green); text-transform: uppercase;
+  margin-bottom: 16px; font-family: 'JetBrains Mono', monospace;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.1; letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+.section-sub {
+  font-size: 17px; color: var(--text2); line-height: 1.7;
+  max-width: 480px;
+}
