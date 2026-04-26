@@ -734,3 +734,59 @@ html, body {
   transition: background 0.15s;
 }
 .export-menu button:hover { background: var(--bg3); }
+/* ─── BREACH ALERT ─── */
+.breach-alert {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 9000;
+  background: var(--bg2);
+  border: 1px solid var(--danger);
+  border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(255,95,95,0.3);
+  max-width: 540px; width: calc(100% - 48px);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.breach-alert.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.breach-inner {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 20px;
+}
+.breach-icon { font-size: 24px; flex-shrink: 0; }
+.breach-text { flex: 1; }
+.breach-text strong {
+  display: block; font-size: 14px; margin-bottom: 4px;
+  color: var(--danger);
+}
+.breach-text p { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.breach-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.breach-btn-panic {
+  background: var(--danger); color: #fff;
+  border: none; border-radius: 6px;
+  padding: 8px 14px; font-size: 12px;
+  font-family: var(--font-ui); font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity 0.2s;
+}
+.breach-btn-panic:hover { opacity: 0.85; }
+.breach-btn-dismiss {
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 6px;
+  padding: 8px 14px; font-size: 12px;
+  font-family: var(--font-ui); cursor: pointer;
+  transition: border-color 0.2s;
+}
+.breach-btn-dismiss:hover { border-color: var(--border2); }
+
+/* ─── VAULT INTEGRITY STATUS ─── */
+.vault-integrity-status {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 0 16px;
+  font-size: 12px; color: var(--text2);
+  font-family: var(--font-mono);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
