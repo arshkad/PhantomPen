@@ -156,3 +156,106 @@ function showBreachAlert(tamperedKeys) {
       text.textContent      = 'Not checked yet';
     }
   }
+// ─── PANIC BUTTON ────────────────────────────────────────────────────────────
+
+async function triggerPanic() {
+    dismissBreachAlert();
+    IntegrityMonitor.stopMonitoring();
+    IntegrityMonitor.clearHashes();
+    Storage.wipeAll();
+    Storage.clearPassphrase();
+    localStorage.removeItem('pp_duress');
+    showPanicScreen();
+  }
+  
+  function showPanicScreen() {
+    document.getElementById('workspace').classList.add('hidden');
+    document.getElementById('unlock-screen').classList.add('hidden');
+    document.getElementById('boot-screen').style.display = 'none';
+    document.getElementById('panic-screen').classList.remove('hidden');
+    document.getElementById('panic-passphrase').focus();
+  }
+  
+  async function panicUnlockAttempt() {
+    const pass = document.getElementById('panic-passphrase').value;
+    const hint = document.getElementById('panic-hint');
+    if (!pass) return;
+  
+    hint.textContent = 'Verifying...';
+    hint.style.color = 'var(--text2)';
+    await new Promise(r => setTimeout(r, 800 + Math.random() * 500));
+    hint.textContent = 'Incorrect passphrase.';
+    hint.style.color = 'var(--danger)';
+    document.getElementById('panic-passphrase').value = '';
+  }
+  
+  // ─── DURESS PASSPHRASE ────────────────────────────────────────────────────────
+  
+  async function setDuressPassphrase() {
+    const duress = prompt('Set duress passphrase:\n(Using this to unlock will silently wipe your vault and look like a wrong password)');
+    if (!duress || duress.length < 4) { showToast('Too short — min 4 characters', true); return; }
+  
+    const hash = await IntegrityMonitor.sha256('duress:' + duress);
+    localStorage.setItem('pp_duress', hash);
+    showToast('Duress passphrase set ✓');
+  }
+  
+  async function checkDuressPassphrase(pass) {
+    const stored = localStorage.getItem('pp_duress');
+    if (!stored) return false;
+    const hash = await IntegrityMonitor.sha256('duress:' + pass);
+    return hash === stored;
+  }
+  
+  // ─── KEYBOARD SHORTCUT ────────────────────────────────────────────────────────
+  
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'X') {
+      e.preventDefault();
+      triggerPanic();
+    }
+  });
+  
+  // ─── HOOK INTO UNLOCK + WORKSPACE INIT ───────────────────────────────────────
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const unlockBtn       = document.getElementById('unlock-btn');
+    const passphraseInput = document.getElementById('passphrase-input');
+  
+    if (unlockBtn) {
+      unlockBtn.addEventListener('click', checkDuressOnUnlock, { capture: true });
+    }
+    if (passphraseInput) {
+      passphraseInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') checkDuressOnUnlock();
+      }, { capture: true });
+    }
+  });
+  
+  async function checkDuressOnUnlock() {
+    const pass = document.getElementById('passphrase-input').value;
+    if (!pass) return;
+  
+    const isDuress = await checkDuressPassphrase(pass);
+    if (isDuress) {
+      document.getElementById('passphrase-input').value = '';
+      document.getElementById('unlock-hint').textContent = 'Verifying...';
+      await new Promise(r => setTimeout(r, 900 + Math.random() * 400));
+      Storage.wipeAll();
+      IntegrityMonitor.clearHashes();
+      localStorage.removeItem('pp_duress');
+      document.getElementById('unlock-hint').textContent = 'Incorrect passphrase.';
+    }
+  }
+  
+  // Called from app.js after successful unlock
+  async function initSecureVault() {
+    // Snapshot all current data for integrity baseline
+    await IntegrityMonitor.snapshotAll();
+  
+    // Start background monitoring — alert on breach
+    IntegrityMonitor.startMonitoring(showBreachAlert);
+  
+    // Update UI status
+    updateIntegrityStatus('clean');
+  }
