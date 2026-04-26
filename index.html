@@ -5,355 +5,701 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PhantomPen OS — Private Creative Workspace</title>
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#7fff7f">
-<link rel="stylesheet" href="src/styles.css">
+<meta name="theme-color" content="#a78bfa">
+<meta name="description" content="A fully offline, encrypted creative workspace with local AI. No cloud. No tracking. No lock-in.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #060608;
+  --bg2: #0e0e12;
+  --bg3: #16161c;
+  --border: #ffffff0f;
+  --border2: #ffffff1a;
+  --text: #f0f0f8;
+  --text2: #8888a8;
+  --text3: #44445a;
+  --accent: #a78bfa;
+  --accent2: #7c3aed;
+  --accent-dim: #7b5ef815;
+  --accent-glow: #7b5ef840;
+  --red: #ff5f7f;
+  --amber: #ffbf5f;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed; pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s ease;
+  mix-blend-mode: screen;
+}
+.cursor-ring {
+  width: 32px; height: 32px;
+  border: 1px solid var(--accent-glow);
+  border-radius: 50%;
+  position: fixed; pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.15s ease, width 0.2s, height 0.2s;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 20px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 100;
+  background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 700;
+  text-decoration: none; color: var(--text);
+}
+.nav-logo-icon {
+  color: var(--accent); font-size: 22px;
+  animation: iconPulse 3s ease-in-out infinite;
+}
+@keyframes iconPulse {
+  0%,100% { text-shadow: 0 0 10px var(--accent-glow); }
+  50% { text-shadow: 0 0 30px var(--accent), 0 0 60px var(--accent-glow); }
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a {
+  color: var(--text2); text-decoration: none;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.3px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  background: var(--accent) !important;
+  color: var(--bg) !important;
+  padding: 8px 20px !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  transition: background 0.2s, transform 0.1s !important;
+}
+.nav-cta:hover { background: var(--accent2) !important; transform: translateY(-1px); }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 120px 48px 80px;
+  position: relative; overflow: hidden;
+  text-align: center;
+}
+
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+}
+
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-inner { position: relative; z-index: 1; max-width: 800px; }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-glow);
+  border-radius: 99px;
+  padding: 6px 16px;
+  font-size: 12px; font-weight: 600;
+  color: var(--accent); letter-spacing: 0.5px;
+  margin-bottom: 32px;
+  animation: fadeUp 0.6s ease both;
+}
+.badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(48px, 8vw, 88px);
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.6s ease 0.1s both;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero-title .strike {
+  position: relative; color: var(--text3);
+}
+.hero-title .strike::after {
+  content: '';
+  position: absolute; left: 0; right: 0; top: 50%;
+  height: 2px; background: var(--red);
+  transform: rotate(-2deg);
+}
+
+.hero-sub {
+  font-size: 18px; color: var(--text2); line-height: 1.7;
+  max-width: 520px; margin: 0 auto 40px;
+  animation: fadeUp 0.6s ease 0.2s both;
+}
+
+.hero-actions {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; flex-wrap: wrap;
+  animation: fadeUp 0.6s ease 0.3s both;
+}
+.btn-main {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: var(--bg);
+  padding: 14px 28px; border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 700;
+  text-decoration: none; letter-spacing: 0.3px;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 0 0 0 var(--accent-glow);
+}
+.btn-main:hover {
+  background: var(--accent2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--accent-glow);
+}
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--text);
+  padding: 14px 28px; border-radius: 8px;
+  border: 1px solid var(--border2);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.btn-outline:hover { border-color: var(--text2); transform: translateY(-2px); }
+
+.hero-note {
+  margin-top: 20px;
+  font-size: 12px; color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+  animation: fadeUp 0.6s ease 0.4s both;
+}
+.hero-note span { color: var(--accent); }
+
+/* ── FEATURE STRIP ── */
+.feature-strip {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+  overflow: hidden;
+}
+.strip-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px 32px;
+  border-right: 1px solid var(--border);
+  font-size: 13px; color: var(--text2); font-weight: 500;
+  white-space: nowrap;
+}
+.strip-item:last-child { border-right: none; }
+.strip-icon { color: var(--accent); font-size: 16px; }
+
+/* ── SECTIONS ── */
+section { padding: 100px 48px; position: relative; }
+
+.section-label {
+  font-size: 11px; letter-spacing: 2px; font-weight: 700;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: 16px; font-family: 'JetBrains Mono', monospace;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.1; letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+.section-sub {
+  font-size: 17px; color: var(--text2); line-height: 1.7;
+  max-width: 480px;
+}
+
+/* ── HOW IT WORKS ── */
+#how {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+  max-width: 1100px; margin: 0 auto;
+}
+.steps { display: flex; flex-direction: column; gap: 32px; }
+.step {
+  display: flex; gap: 20px;
+  opacity: 0; transform: translateX(-20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.step.visible { opacity: 1; transform: translateX(0); }
+.step-num {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--accent-dim); border: 1px solid var(--accent-glow);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--accent); font-weight: 700;
+  flex-shrink: 0;
+}
+.step-content strong {
+  display: block; font-size: 15px; margin-bottom: 4px;
+}
+.step-content p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+.how-visual {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--text3);
+  line-height: 2;
+}
+.how-visual .line-green { color: var(--accent); }
+.how-visual .line-dim { color: var(--text3); }
+.how-visual .line-text { color: var(--text2); }
+.cursor-blink {
+  display: inline-block; width: 8px; height: 14px;
+  background: var(--accent); vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── FEATURES GRID ── */
+#features { max-width: 1100px; margin: 0 auto; text-align: center; }
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px; margin-top: 60px;
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  background: var(--border);
+}
+.feature-card {
+  background: var(--bg2); padding: 36px 32px;
+  transition: background 0.2s;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease, background 0.2s;
+}
+.feature-card.visible { opacity: 1; transform: translateY(0); }
+.feature-card:hover { background: var(--bg3); }
+.feature-icon {
+  font-size: 28px; margin-bottom: 16px; display: block;
+}
+.feature-card h3 {
+  font-size: 16px; font-weight: 700; margin-bottom: 8px;
+}
+.feature-card p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.feature-tag {
+  display: inline-block; margin-top: 12px;
+  font-size: 10px; letter-spacing: 1px; font-weight: 700;
+  color: var(--accent); background: var(--accent-dim);
+  border: 1px solid var(--accent-glow);
+  padding: 3px 8px; border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── PRIVACY SECTION ── */
+#privacy {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+}
+.privacy-table {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.privacy-row {
+  display: flex; align-items: center;
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+  font-size: 13px; gap: 12px;
+}
+.privacy-row:last-child { border-bottom: none; }
+.privacy-label { flex: 1; color: var(--text2); }
+.privacy-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 600;
+  padding: 3px 10px; border-radius: 4px;
+}
+.val-green { background: var(--accent-dim); color: var(--accent); }
+.val-red { background: #ff1f4f15; color: var(--red); }
+
+/* ── CTA ── */
+#cta {
+  text-align: center; max-width: 600px; margin: 0 auto;
+  padding: 100px 48px;
+}
+.cta-glow {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: 400px; height: 200px;
+  background: radial-gradient(ellipse, var(--accent-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+}
+footer a { color: var(--text3); text-decoration: none; }
+footer a:hover { color: var(--text2); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  #hero { padding: 100px 24px 60px; }
+  #how, #privacy { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px; }
+  section { padding: 60px 24px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .strip-item { padding: 12px 20px; font-size: 12px; }
+  footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
 </head>
 <body>
-  <div id="app">
-    <!-- Boot Screen -->
-    <div id="boot-screen">
-      <div class="boot-inner">
-        <div class="boot-logo">
-          <span class="ghost-icon">◈</span>
-          <h1>PhantomPen<span class="os-tag">OS</span></h1>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-icon">◈</span>
+    Phantom<span>Pen</span>
+  </a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#privacy">Privacy</a>
+    <a href="app.html" class="nav-cta">Open App →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Track 4: DIY Software — Hackathon 2026
+    </div>
+    <h1 class="hero-title">
+      Your words.<br>
+      <em>Your device.</em><br>
+      <span class="strike">Their servers.</span>
+    </h1>
+    <p class="hero-sub">
+      A fully offline, encrypted creative workspace with local AI.
+      Write, store, and share — without giving anyone else access to your work.
+    </p>
+    <div class="hero-actions">
+      <a href="app.html" class="btn-main">
+        <span>◈</span> Open PhantomPen
+      </a>
+      <a href="#how" class="btn-outline">
+        See how it works ↓
+      </a>
+    </div>
+    <p class="hero-note">
+      <span>AES-256 encrypted</span> · runs offline · zero telemetry · open source
+    </p>
+  </div>
+</section>
+
+<!-- FEATURE STRIP -->
+<div class="feature-strip">
+  <div class="strip-item"><span class="strip-icon">🔒</span> End-to-end encrypted</div>
+  <div class="strip-item"><span class="strip-icon">✈️</span> Works offline</div>
+  <div class="strip-item"><span class="strip-icon">🤖</span> Local AI (Ollama)</div>
+  <div class="strip-item"><span class="strip-icon">📜</span> Version history</div>
+  <div class="strip-item"><span class="strip-icon">🔗</span> Secure share links</div>
+  <div class="strip-item"><span class="strip-icon">📤</span> PDF & DOCX export</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div id="how">
+    <div>
+      <p class="section-label">How it works</p>
+      <h2 class="section-title">Private by design,<br>not by policy.</h2>
+      <p class="section-sub">PhantomPen doesn't ask you to trust it. The encryption happens on your device before anything is stored — there's nothing to leak.</p>
+      <div class="steps" style="margin-top:40px">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <strong>Set your passphrase</strong>
+            <p>Derives an AES-256 key using PBKDF2 with 200,000 iterations. Never stored, never sent anywhere.</p>
+          </div>
         </div>
-        <div class="boot-bar-wrap">
-          <div class="boot-bar"><div class="boot-fill"></div></div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <strong>Write anything</strong>
+            <p>Rich text editor with autosave. Every keystroke is encrypted before it hits localStorage.</p>
+          </div>
         </div>
-        <p class="boot-status">Initializing secure workspace...</p>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <strong>AI assists locally</strong>
+            <p>Ollama runs a language model on your machine. Your prompts never leave your device.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <strong>Share securely</strong>
+            <p>Encrypted share links with the key in the URL fragment — the server never sees it.</p>
+          </div>
+        </div>
       </div>
     </div>
-
-    <!-- Unlock Screen -->
-    <div id="unlock-screen" class="hidden">
-      <div class="unlock-inner">
-        <div class="lock-icon">🔒</div>
-        <h2>Enter Passphrase</h2>
-        <p class="unlock-sub">All data is encrypted locally. Nothing leaves your device.</p>
-        <input type="password" id="passphrase-input" placeholder="Enter passphrase..." autocomplete="off" />
-        <button id="unlock-btn" class="btn-primary">Unlock Workspace</button>
-        <button id="create-btn" class="btn-ghost">Create New Vault</button>
-        <p class="unlock-hint" id="unlock-hint"></p>
-      </div>
-    </div>
-
-    <!-- Main Workspace -->
-    <div id="workspace" class="hidden">
-      <!-- Sidebar -->
-      <aside id="sidebar">
-        <div class="sidebar-header">
-          <span class="ghost-icon-sm">◈</span>
-          <span class="brand-sm">PhantomPen<em>OS</em></span>
-          <button id="lock-btn" title="Lock Workspace">🔒</button>
-        </div>
-
-        <div class="sidebar-section">
-          <div class="section-label">WORKSPACE</div>
-          <button class="nav-btn active" data-panel="editor" onclick="switchPanel('editor')">
-            <span>✏️</span> Editor
-          </button>
-          <button class="nav-btn" data-panel="files" onclick="switchPanel('files')">
-            <span>📁</span> Files
-          </button>
-          <button class="nav-btn" data-panel="history" onclick="switchPanel('history')">
-            <span>🕐</span> History
-          </button>
-          <button class="nav-btn" data-panel="share" onclick="switchPanel('share')">
-            <span>🔗</span> Share
-          </button>
-          <button class="nav-btn" data-panel="ai" onclick="switchPanel('ai')">
-            <span>🤖</span> AI Assistant
-          </button>
-          <button class="nav-btn" data-panel="settings" onclick="switchPanel('settings')">
-            <span>⚙️</span> Settings
-          </button>
-        </div>
-
-        <div class="sidebar-section">
-          <div class="section-label">DOCUMENTS</div>
-          <div id="doc-list"></div>
-          <button class="new-doc-btn" onclick="newDocument()">+ New Document</button>
-        </div>
-
-        <div class="sidebar-footer">
-          <div class="vault-status">
-            <span class="status-dot"></span>
-            <span id="vault-label">Vault locked</span>
-          </div>
-          <div class="storage-info" id="storage-info">0 docs · 0 KB</div>
-        </div>
-      </aside>
-
-      <!-- Main Content -->
-      <main id="main-content">
-
-        <!-- Editor Panel -->
-        <div id="panel-editor" class="panel active">
-          <div class="editor-toolbar">
-            <div class="doc-title-wrap">
-              <input type="text" id="doc-title" placeholder="Untitled Document" class="doc-title-input" />
-              <span class="save-indicator" id="save-indicator">●</span>
-            </div>
-            <div class="toolbar-actions">
-              <button class="tool-btn" onclick="formatText('bold')" title="Bold">𝐁</button>
-              <button class="tool-btn" onclick="formatText('italic')" title="Italic">𝐼</button>
-              <button class="tool-btn" onclick="insertHeading(1)" title="H1">H1</button>
-              <button class="tool-btn" onclick="insertHeading(2)" title="H2">H2</button>
-              <button class="tool-btn" onclick="insertCodeBlock()" title="Code">⌨</button>
-              <div class="toolbar-sep"></div>
-              <button class="tool-btn ai-tool-btn" onclick="quickAI('continue')" title="AI: Continue writing">✨ Continue</button>
-              <button class="tool-btn ai-tool-btn" onclick="quickAI('improve')" title="AI: Improve selection">⚡ Improve</button>
-              <button class="tool-btn ai-tool-btn" onclick="quickAI('fixgrammar')" title="AI: Fix grammar">✓ Fix</button>
-              <div class="toolbar-sep"></div>
-              <button class="tool-btn" onclick="saveCurrentDoc()" title="Save">💾</button>
-              <div class="export-wrap">
-                <button class="tool-btn" onclick="toggleExportMenu()" title="Export" id="export-btn">⬇ Export</button>
-                <div class="export-menu hidden" id="export-menu">
-                  <button onclick="exportAs('pdf')">📕 Export as PDF</button>
-                  <button onclick="exportAs('docx')">📘 Export as DOCX</button>
-                  <button onclick="exportAs('txt')">📄 Export as TXT</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="editor" contenteditable="true" spellcheck="true" placeholder="Start writing... Everything is saved locally and encrypted."></div>
-          <div class="editor-statusbar">
-            <span id="word-count">0 words</span>
-            <span id="char-count">0 chars</span>
-            <span id="last-saved">Not saved</span>
-          </div>
-        </div>
-
-        <!-- Files Panel -->
-        <div id="panel-files" class="panel">
-          <div class="panel-header">
-            <h2>📁 File Vault</h2>
-            <p>All files stored and encrypted locally.</p>
-          </div>
-          <div class="files-grid" id="files-grid">
-            <div class="file-upload-zone" id="drop-zone">
-              <div class="drop-content">
-                <span class="drop-icon">⬆</span>
-                <p>Drop files here or click to upload</p>
-                <p class="drop-sub">Images, PDFs, code files — encrypted on-device</p>
-                <input type="file" id="file-input" multiple hidden />
-                <button class="btn-primary" onclick="document.getElementById('file-input').click()">Choose Files</button>
-              </div>
-            </div>
-          </div>
-          <div id="file-list" class="file-list"></div>
-        </div>
-
-        <!-- History Panel -->
-        <div id="panel-history" class="panel">
-          <div class="panel-header">
-            <h2>🕐 Version History</h2>
-            <p>Every save creates a snapshot. Restore any version.</p>
-          </div>
-          <div class="history-doc-select">
-            <label>Document:</label>
-            <select id="history-doc-select" onchange="loadHistory()">
-              <option value="">— Select document —</option>
-            </select>
-          </div>
-          <div id="history-list" class="history-list">
-            <div class="empty-state">Select a document to view its history.</div>
-          </div>
-        </div>
-
-        <!-- Share Panel -->
-        <div id="panel-share" class="panel">
-          <div class="panel-header">
-            <h2>🔗 Secure Share</h2>
-            <p>Generate encrypted, expiring share links. No server required — the key is in the URL fragment.</p>
-          </div>
-          <div class="share-form">
-            <div class="form-group">
-              <label>Document to share</label>
-              <select id="share-doc-select">
-                <option value="">— Select document —</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Expires after</label>
-              <select id="share-expiry">
-                <option value="3600000">1 hour</option>
-                <option value="86400000" selected>24 hours</option>
-                <option value="604800000">7 days</option>
-                <option value="0">Never</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Password protect (optional)</label>
-              <input type="password" id="share-password" placeholder="Extra password layer..." />
-            </div>
-            <button class="btn-primary" onclick="generateShareLink()">Generate Share Link</button>
-          </div>
-          <div id="share-result" class="share-result hidden">
-            <div class="share-link-box">
-              <label>Your secure link:</label>
-              <div class="link-copy-row">
-                <input type="text" id="share-link-output" readonly />
-                <button class="btn-copy" onclick="copyShareLink()">Copy</button>
-              </div>
-              <p class="share-note">⚠ The encryption key is in the URL fragment (#). Anyone with this link can read the document.</p>
-            </div>
-          </div>
-          <div class="share-divider"></div>
-
-          <div class="panel-header">
-            <h2>🔓 Open Shared Link</h2>
-            <p>Paste a PhantomPen share link to decrypt and read it.</p>
-          </div>
-          <div class="share-form">
-            <div class="form-group">
-              <label>Paste share link</label>
-              <input type="text" id="open-share-input" placeholder="phantompen://share#..." />
-            </div>
-            <button class="btn-primary" onclick="openShareLink()">Decrypt & Open</button>
-          </div>
-          <div id="open-share-result" class="open-share-result hidden"></div>
-        </div>
-
-        <!-- AI Assistant Panel -->
-        <div id="panel-ai" class="panel">
-          <div class="panel-header">
-            <h2>🤖 AI Writing Assistant</h2>
-            <p>Local AI powered by Ollama — fully private, zero cloud.</p>
-          </div>
-          <div class="ai-status-bar" id="ai-status-bar">
-            <span class="ai-status-dot" id="ai-status-dot">●</span>
-            <span id="ai-status-text">Checking Ollama...</span>
-            <a href="https://ollama.com" target="_blank" class="ai-install-link" id="ai-install-link" style="display:none">Install Ollama →</a>
-          </div>
-          <div class="ai-section">
-            <div class="ai-section-label">QUICK ACTIONS</div>
-            <div class="ai-actions-grid">
-              <button class="ai-action-btn" onclick="quickAI('continue')">
-                <span>✨</span><strong>Continue writing</strong><small>AI picks up where you left off</small>
-              </button>
-              <button class="ai-action-btn" onclick="quickAI('improve')">
-                <span>⚡</span><strong>Improve selection</strong><small>Make selected text clearer</small>
-              </button>
-              <button class="ai-action-btn" onclick="quickAI('summarise')">
-                <span>📋</span><strong>Summarise</strong><small>2-3 sentence summary</small>
-              </button>
-              <button class="ai-action-btn" onclick="quickAI('brainstorm')">
-                <span>💡</span><strong>Brainstorm ideas</strong><small>Generate related ideas</small>
-              </button>
-              <button class="ai-action-btn" onclick="quickAI('fixgrammar')">
-                <span>✓</span><strong>Fix grammar</strong><small>Clean up spelling</small>
-              </button>
-            </div>
-          </div>
-          <div class="ai-result-wrap hidden" id="ai-result-wrap">
-            <div class="ai-result-header">
-              <span id="ai-result-label">AI suggestion</span>
-              <div class="ai-result-actions">
-                <button class="btn-copy" onclick="insertAIResult()">Insert into doc</button>
-                <button class="ai-dismiss" onclick="dismissAIResult()">✕</button>
-              </div>
-            </div>
-            <div class="ai-result-body" id="ai-result-body"></div>
-          </div>
-          <div class="ai-section">
-            <div class="ai-section-label">CHAT WITH YOUR DOCUMENT</div>
-            <div class="ai-chat-box" id="ai-chat-box">
-              <div class="ai-chat-empty">Ask anything about your document...</div>
-            </div>
-            <div class="ai-chat-input-row">
-              <input type="text" id="ai-chat-input" placeholder="Ask the AI anything..." onkeydown="if(event.key==='Enter') sendAIChat()" />
-              <button class="btn-primary" onclick="sendAIChat()" style="width:auto;padding:10px 16px">Send</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Settings Panel -->
-        <div id="panel-settings" class="panel">
-          <div class="panel-header">
-            <h2>⚙️ Settings</h2>
-          </div>
-          <div class="settings-section">
-            <h3>Security</h3>
-            <div class="setting-row">
-              <div>
-                <strong>Change Passphrase</strong>
-                <p>Re-encrypts all local data with a new passphrase.</p>
-              </div>
-              <button class="btn-secondary" onclick="changePassphrase()">Change</button>
-            </div>
-            <div class="setting-row">
-              <div>
-                <strong>Auto-lock</strong>
-                <p>Lock workspace after inactivity.</p>
-              </div>
-              <select id="autolock-select" onchange="saveSettings()">
-                <option value="0">Never</option>
-                <option value="300000" selected>5 minutes</option>
-                <option value="900000">15 minutes</option>
-                <option value="3600000">1 hour</option>
-              </select>
-            </div>
-          </div>
-          <div class="settings-section">
-            <h3>Data</h3>
-            <div class="setting-row">
-              <div>
-                <strong>Export Vault</strong>
-                <p>Download all data as an encrypted backup file.</p>
-              </div>
-              <button class="btn-secondary" onclick="exportVault()">Export</button>
-            </div>
-            <div class="setting-row">
-              <div>
-                <strong>Import Vault</strong>
-                <p>Restore from a backup file.</p>
-              </div>
-              <button class="btn-secondary" onclick="importVault()">Import</button>
-            </div>
-            <div class="setting-row danger-row">
-              <div>
-                <strong>Wipe Vault</strong>
-                <p>Permanently delete all local data. Cannot be undone.</p>
-              </div>
-              <button class="btn-danger" onclick="wipeVault()">Wipe</button>
-            </div>
-          </div>
-          <div class="settings-section">
-            <h3>About</h3>
-            <div class="about-block">
-              <p><strong>PhantomPen OS</strong> v1.0.0</p>
-              <p>100% local. Zero telemetry. No cloud. No lock-in.</p>
-              <p>Encryption: AES-GCM 256-bit via Web Crypto API</p>
-              <p>Storage: localStorage (no server, no account needed)</p>
-            </div>
-          </div>
-        </div>
-
-      </main>
+    <div class="how-visual">
+      <div class="line-green">// PhantomPen vault</div>
+      <div class="line-dim">————————————————</div>
+      <div class="line-text">passphrase → PBKDF2</div>
+      <div class="line-text">         → AES-256-GCM key</div>
+      <div class="line-dim"></div>
+      <div class="line-text">document  → encrypt()</div>
+      <div class="line-text">         → localStorage</div>
+      <div class="line-dim"></div>
+      <div class="line-green">// AI pipeline</div>
+      <div class="line-dim">————————————————</div>
+      <div class="line-text">prompt → localhost:5001</div>
+      <div class="line-text">       → ollama:11434</div>
+      <div class="line-text">       → llama3.2</div>
+      <div class="line-text">       ← response</div>
+      <div class="line-dim"></div>
+      <div class="line-green">// internet traffic: <span style="color:#ff5f7f">none</span></div>
+      <div class="line-dim">————————————————</div>
+      <div>$ <span class="cursor-blink"></span></div>
     </div>
   </div>
+</section>
 
-  <!-- Toast -->
-  <div id="toast" class="toast hidden"></div>
+<!-- FEATURES -->
+<section>
+  <div id="features">
+    <p class="section-label">Features</p>
+    <h2 class="section-title">Everything a creative needs.<br>Nothing they don't.</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <h3>Encrypted Vault</h3>
+        <p>AES-GCM 256-bit encryption on every document, file, and setting. Your passphrase never leaves your device.</p>
+        <span class="feature-tag">AES-256-GCM</span>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">✏️</span>
+        <h3>Rich Text Editor</h3>
+        <p>Bold, italic, headings, code blocks. Autosaves every 2 seconds. Live word and character count.</p>
+        <span class="feature-tag">OFFLINE</span>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🤖</span>
+        <h3>Local AI Assistant</h3>
+        <p>Continue writing, improve text, fix grammar, brainstorm ideas — powered by Ollama on your own machine.</p>
+        <span class="feature-tag">ZERO CLOUD</span>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🕐</span>
+        <h3>Version History</h3>
+        <p>Every save creates a snapshot. Browse and restore any previous version of your document instantly.</p>
+        <span class="feature-tag">GIT-LIKE</span>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔗</span>
+        <h3>Secure Share Links</h3>
+        <p>Encrypted expiring share links. The decryption key lives in the URL fragment — servers never see it.</p>
+        <span class="feature-tag">E2E ENCRYPTED</span>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📤</span>
+        <h3>Real File Export</h3>
+        <p>Export your work as PDF, DOCX, or TXT with proper formatting, headings, and typography.</p>
+        <span class="feature-tag">PDF · DOCX · TXT</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <script src="src/crypto.js"></script>
-  <script src="src/storage.js"></script>
-  <script src="src/editor.js"></script>
-  <script src="src/files.js"></script>
-  <script src="src/history.js"></script>
-  <script src="src/share.js"></script>
-  <script src="src/ai.js"></script>
-  <script src="src/backend.js"></script>
-  <script src="src/app.js"></script>
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js")
-          .then(() => console.log("PhantomPen: offline mode ready"))
-          .catch(e => console.log("SW failed:", e));
-      });
+<!-- PRIVACY -->
+<section>
+  <div id="privacy">
+    <div>
+      <p class="section-label">Privacy</p>
+      <h2 class="section-title">No cloud.<br>No tracking.<br>No lock-in.</h2>
+      <p class="section-sub">Most "private" apps just promise privacy. PhantomPen makes it technically impossible to spy on you — there's no server to subpoena, no account to hack.</p>
+      <div style="margin-top:32px; display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text2)">
+          <span style="color:var(--accent);margin-top:2px">✓</span>
+          Data stored only in your browser's localStorage
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text2)">
+          <span style="color:var(--accent);margin-top:2px">✓</span>
+          AI runs on your CPU via Ollama — no API calls
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text2)">
+          <span style="color:var(--accent);margin-top:2px">✓</span>
+          Share links use URL fragments — servers never log the key
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text2)">
+          <span style="color:var(--accent);margin-top:2px">✓</span>
+          Export your vault anytime — no platform lock-in
+        </div>
+      </div>
+    </div>
+    <div class="privacy-table">
+      <div class="privacy-row">
+        <span class="privacy-label">Documents stored on server</span>
+        <span class="privacy-val val-red">NEVER</span>
+      </div>
+      <div class="privacy-row">
+        <span class="privacy-label">AI prompts sent to cloud</span>
+        <span class="privacy-val val-red">NEVER</span>
+      </div>
+      <div class="privacy-row">
+        <span class="privacy-label">Account required</span>
+        <span class="privacy-val val-red">NEVER</span>
+      </div>
+      <div class="privacy-row">
+        <span class="privacy-label">Analytics / telemetry</span>
+        <span class="privacy-val val-red">NONE</span>
+      </div>
+      <div class="privacy-row">
+        <span class="privacy-label">Encryption</span>
+        <span class="privacy-val val-green">AES-256-GCM</span>
+      </div>
+      <div class="privacy-row">
+        <span class="privacy-label">Works offline</span>
+        <span class="privacy-val val-green">ALWAYS</span>
+      </div>
+      <div class="privacy-row">
+        <span class="privacy-label">Data portability</span>
+        <span class="privacy-val val-green">FULL</span>
+      </div>
+      <div class="privacy-row">
+        <span class="privacy-label">Open source</span>
+        <span class="privacy-val val-green">YES</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="position:relative">
+  <div class="cta-glow"></div>
+  <div id="cta">
+    <p class="section-label">Get started</p>
+    <h2 class="section-title">Your creative work deserves better.</h2>
+    <p style="color:var(--text2);font-size:17px;line-height:1.7;margin:16px 0 36px">
+      Open PhantomPen right now — no signup, no install, no credit card. Just open it and start writing.
+    </p>
+    <a href="app.html" class="btn-main" style="font-size:16px;padding:16px 36px">
+      <span>◈</span> Open PhantomPen OS
+    </a>
+    <p style="margin-top:16px;font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace">
+      Works in Chrome, Firefox, Edge, Safari
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>◈ PhantomPen OS · Built for Track 4: DIY Software</span>
+  <span>AES-256-GCM · Zero telemetry · Fully offline</span>
+</footer>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx - 4 + 'px';
+  cursor.style.top  = my - 4 + 'px';
+});
+
+function animateRing() {
+  rx += (mx - rx - 16) * 0.12;
+  ry += (my - ry - 16) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'scale(2)';
+    ring.style.width = '48px'; ring.style.height = '48px';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'scale(1)';
+    ring.style.width = '32px'; ring.style.height = '32px';
+  });
+});
+
+// Scroll animations
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
     }
-  </script>
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.step, .feature-card').forEach(el => observer.observe(el));
+</script>
+
 </body>
 </html>
