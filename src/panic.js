@@ -81,4 +81,78 @@ const IntegrityMonitor = (() => {
   
     return { snapshotAll, verifyAll, startMonitoring, stopMonitoring, clearHashes, sha256 };
   })();
+
+// ─── BREACH ALERT UI ─────────────────────────────────────────────────────────
+
+function showBreachAlert(tamperedKeys) {
+    const existing = document.getElementById('breach-alert');
+    if (existing) existing.remove();
   
+    const alert = document.createElement('div');
+    alert.id = 'breach-alert';
+    alert.className = 'breach-alert';
+    alert.innerHTML = `
+      <div class="breach-inner">
+        <span class="breach-icon">⚠️</span>
+        <div class="breach-text">
+          <strong>Vault Integrity Breach Detected</strong>
+          <p>${tamperedKeys.length} encrypted record(s) were modified outside PhantomPen. Your data may have been tampered with.</p>
+        </div>
+        <div class="breach-actions">
+          <button class="breach-btn-panic" onclick="triggerPanic()">🚨 Wipe Vault</button>
+          <button class="breach-btn-dismiss" onclick="dismissBreachAlert()">Dismiss</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(alert);
+    setTimeout(() => alert.classList.add('visible'), 10);
+  }
+  
+  function dismissBreachAlert() {
+    const alert = document.getElementById('breach-alert');
+    if (alert) {
+      alert.classList.remove('visible');
+      setTimeout(() => alert.remove(), 300);
+    }
+    // Re-snapshot after dismiss so we don't keep alerting
+    IntegrityMonitor.snapshotAll();
+  }
+  
+  // ─── VAULT SECURITY PANEL ────────────────────────────────────────────────────
+  
+  async function runManualIntegrityCheck() {
+    const btn = document.getElementById('integrity-check-btn');
+    if (btn) { btn.textContent = 'Checking...'; btn.disabled = true; }
+  
+    const tampered = await IntegrityMonitor.verifyAll();
+  
+    if (btn) { btn.textContent = 'Run Check'; btn.disabled = false; }
+  
+    if (tampered.length === 0) {
+      showToast('✓ Vault integrity verified — no tampering detected');
+      updateIntegrityStatus('clean');
+    } else {
+      showBreachAlert(tampered);
+      updateIntegrityStatus('breach');
+    }
+  }
+  
+  function updateIntegrityStatus(status) {
+    const dot  = document.getElementById('integrity-status-dot');
+    const text = document.getElementById('integrity-status-text');
+    if (!dot || !text) return;
+  
+    if (status === 'clean') {
+      dot.style.background  = 'var(--accent)';
+      dot.style.boxShadow   = '0 0 6px var(--accent)';
+      text.textContent      = 'All records verified — no tampering detected';
+    } else if (status === 'breach') {
+      dot.style.background  = 'var(--danger)';
+      dot.style.boxShadow   = '0 0 6px var(--danger)';
+      text.textContent      = 'Tampering detected!';
+    } else {
+      dot.style.background  = 'var(--text3)';
+      dot.style.boxShadow   = 'none';
+      text.textContent      = 'Not checked yet';
+    }
+  }
