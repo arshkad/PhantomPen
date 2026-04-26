@@ -1,23 +1,24 @@
 :root {
-    --bg: #0a0a0b;
-    --bg2: #111114;
-    --bg3: #18181c;
-    --border: #2a2a30;
-    --border2: #3a3a42;
-    --text: #e8e8f0;
-    --text2: #8888a0;
-    --text3: #55556a;
-    --accent: #7fff7f;
-    --accent2: #5fdf5f;
-    --accent-dim: #7fff7f22;
-    --danger: #ff5f5f;
-    --warn: #ffbf5f;
-    --font-ui: 'Syne', sans-serif;
-    --font-mono: 'DM Mono', monospace;
-    --font-editor: 'Instrument Serif', serif;
-    --sidebar-w: 240px;
-    --radius: 8px;
-  }
+  --bg: #0a0a0b;
+  --bg2: #111114;
+  --bg3: #18181c;
+  --border: #2a2a30;
+  --border2: #3a3a42;
+  --text: #e8e8f0;
+  --text2: #8888a0;
+  --text3: #55556a;
+  --accent: #a78bfa;
+  --accent2: #7c3aed;
+  --accent-dim: #7b5ef820;
+  --accent-glow: #a78bfa40;
+  --danger: #ff5f5f;
+  --warn: #ffbf5f;
+  --font-ui: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Fira Code', 'Consolas', monospace;
+  --font-editor: 'Georgia', serif;
+  --sidebar-w: 240px;
+  --radius: 8px;
+}
   
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   
