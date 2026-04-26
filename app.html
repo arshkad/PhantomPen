@@ -247,3 +247,87 @@
                 </button>
               </div>
             </div>
+            <div class="ai-result-wrap hidden" id="ai-result-wrap">
+                <div class="ai-result-header">
+                  <span id="ai-result-label">AI suggestion</span>
+                  <div class="ai-result-actions">
+                    <button class="btn-copy" onclick="insertAIResult()">Insert into doc</button>
+                    <button class="ai-dismiss" onclick="dismissAIResult()">✕</button>
+                  </div>
+                </div>
+                <div class="ai-result-body" id="ai-result-body"></div>
+              </div>
+              <div class="ai-section">
+                <div class="ai-section-label">CHAT WITH YOUR DOCUMENT</div>
+                <div class="ai-chat-box" id="ai-chat-box">
+                  <div class="ai-chat-empty">Ask anything about your document...</div>
+                </div>
+                <div class="ai-chat-input-row">
+                  <input type="text" id="ai-chat-input" placeholder="Ask the AI anything..." onkeydown="if(event.key==='Enter') sendAIChat()" />
+                  <button class="btn-primary" onclick="sendAIChat()" style="width:auto;padding:10px 16px">Send</button>
+                </div>
+              </div>
+            </div>
+    
+            <!-- Settings Panel -->
+            <div id="panel-settings" class="panel">
+              <div class="panel-header">
+                <h2>⚙️ Settings</h2>
+              </div>
+              <div class="settings-section">
+                <h3>Security</h3>
+                <div class="setting-row">
+                  <div>
+                    <strong>Change Passphrase</strong>
+                    <p>Re-encrypts all local data with a new passphrase.</p>
+                  </div>
+                  <button class="btn-secondary" onclick="changePassphrase()">Change</button>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Auto-lock</strong>
+                    <p>Lock workspace after inactivity.</p>
+                  </div>
+                  <select id="autolock-select" onchange="saveSettings()">
+                    <option value="0">Never</option>
+                    <option value="300000" selected>5 minutes</option>
+                    <option value="900000">15 minutes</option>
+                    <option value="3600000">1 hour</option>
+                  </select>
+                </div>
+              </div>
+              <div class="settings-section">
+                <h3>Data</h3>
+                <div class="setting-row">
+                  <div>
+                    <strong>Export Vault</strong>
+                    <p>Download all data as an encrypted backup file.</p>
+                  </div>
+                  <button class="btn-secondary" onclick="exportVault()">Export</button>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Import Vault</strong>
+                    <p>Restore from a backup file.</p>
+                  </div>
+                  <button class="btn-secondary" onclick="importVault()">Import</button>
+                </div>
+                <div class="setting-row danger-row">
+                  <div>
+                    <strong>Wipe Vault</strong>
+                    <p>Permanently delete all local data. Cannot be undone.</p>
+                  </div>
+                  <button class="btn-danger" onclick="wipeVault()">Wipe</button>
+                </div>
+              </div>
+              <div class="settings-section">
+                <h3>About</h3>
+                <div class="about-block">
+                  <p><strong>PhantomPen OS</strong> v1.0.0</p>
+                  <p>100% local. Zero telemetry. No cloud. No lock-in.</p>
+                  <p>Encryption: AES-GCM 256-bit via Web Crypto API</p>
+                  <p>Storage: localStorage (no server, no account needed)</p>
+                </div>
+              </div>
+            </div>
+    
