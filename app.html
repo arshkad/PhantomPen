@@ -330,4 +330,30 @@
                 </div>
               </div>
             </div>
-    
+        </main>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="src/crypto.js"></script>
+  <script src="src/storage.js"></script>
+  <script src="src/editor.js"></script>
+  <script src="src/files.js"></script>
+  <script src="src/history.js"></script>
+  <script src="src/share.js"></script>
+  <script src="src/ai.js"></script>
+  <script src="src/backend.js"></script>
+  <script src="src/app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js")
+          .then(() => console.log("PhantomPen: offline mode ready"))
+          .catch(e => console.log("SW failed:", e));
+      });
+    }
+  </script>
+</body>
+</html>    
