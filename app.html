@@ -296,7 +296,59 @@
                   </select>
                 </div>
               </div>
+
               <div class="settings-section">
+                <div class="settings-section">
+                  <h3>Security</h3>
+                  <div class="setting-row">
+                    <div>
+                      <strong>Change Passphrase</strong>
+                      <p>Re-encrypts all local data with a new passphrase.</p>
+                    </div>
+                    <button class="btn-secondary" onclick="changePassphrase()">Change</button>
+                  </div>
+                  <div class="setting-row">
+                    <div>
+                      <strong>Auto-lock</strong>
+                      <p>Lock workspace after inactivity.</p>
+                    </div>
+                    <select id="autolock-select" onchange="saveSettings()">
+                      <option value="0">Never</option>
+                      <option value="300000" selected>5 minutes</option>
+                      <option value="900000">15 minutes</option>
+                      <option value="3600000">1 hour</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="settings-section">
+                  <h3>🛡 Secure Vault</h3>
+                  <div class="vault-integrity-status">
+                    <span class="status-dot" id="integrity-status-dot" style="background:var(--text3);box-shadow:none"></span>
+                    <span id="integrity-status-text">Not checked yet</span>
+                  </div>
+                  <div class="setting-row">
+                    <div>
+                      <strong>Breach Detection</strong>
+                      <p>Background integrity monitoring using SHA-256 hashes. Alerts you if any encrypted record is tampered with outside PhantomPen.</p>
+                    </div>
+                    <button class="btn-secondary" id="integrity-check-btn" onclick="runManualIntegrityCheck()">Run Check</button>
+                  </div>
+                  <div class="setting-row">
+                    <div>
+                      <strong>Duress Passphrase</strong>
+                      <p>A second passphrase that silently wipes the vault on unlock — looks like a wrong password to an attacker.</p>
+                    </div>
+                    <button class="btn-secondary" onclick="setDuressPassphrase()">Set</button>
+                  </div>
+                  <div class="setting-row danger-row">
+                    <div>
+                      <strong>🚨 Panic Button</strong>
+                      <p>Instantly wipes vault and shows a convincing decoy screen. Hotkey: <kbd>Ctrl+Shift+X</kbd></p>
+                    </div>
+                    <button class="btn-danger" onclick="triggerPanic()">Activate</button>
+                  </div>
+                </div>
                 <h3>Data</h3>
                 <div class="setting-row">
                   <div>
