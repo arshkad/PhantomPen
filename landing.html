@@ -165,3 +165,55 @@ nav {
 .hero-title .strike {
   position: relative; color: var(--text3);
 }
+.hero-title .strike::after {
+  content: '';
+  position: absolute; left: 0; right: 0; top: 50%;
+  height: 2px; background: var(--red);
+  transform: rotate(-2deg);
+}
+
+.hero-sub {
+  font-size: 18px; color: var(--text2); line-height: 1.7;
+  max-width: 520px; margin: 0 auto 40px;
+  animation: fadeUp 0.6s ease 0.2s both;
+}
+
+.hero-actions {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; flex-wrap: wrap;
+  animation: fadeUp 0.6s ease 0.3s both;
+}
+.btn-main {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--green); color: var(--bg);
+  padding: 14px 28px; border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 700;
+  text-decoration: none; letter-spacing: 0.3px;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 0 0 0 var(--green-glow);
+}
+.btn-main:hover {
+  background: var(--green2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--green-glow);
+}
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--text);
+  padding: 14px 28px; border-radius: 8px;
+  border: 1px solid var(--border2);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.btn-outline:hover { border-color: var(--text2); transform: translateY(-2px); }
+
+.hero-note {
+  margin-top: 20px;
+  font-size: 12px; color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+  animation: fadeUp 0.6s ease 0.4s both;
+}
+.hero-note span { color: var(--green); }
