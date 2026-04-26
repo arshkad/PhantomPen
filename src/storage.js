@@ -14,6 +14,10 @@ const Storage = (() => {
       const json = JSON.stringify(value);
       const enc  = await Crypto.encrypt(json, _passphrase);
       localStorage.setItem(PREFIX + key, enc);
+      // Update integrity hash after every save
+      if (typeof IntegrityMonitor !== 'undefined') {
+        await IntegrityMonitor.snapshotAll();
+      }
     }
   
     async function load(key) {
